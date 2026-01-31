@@ -1,49 +1,40 @@
 # TripLab - Collaborative Trip Planning
 
-A real-time collaborative trip planning app with Firebase Realtime Database and AI integration via OpenRouter.
+A real-time collaborative trip planning app with Firebase Realtime Database and AI integration.
 
 ## Features
 
-- **Real-time Collaboration**: See your travel companions' date selections in real-time
+- **Real-time Collaboration**: See your travel companions' date selections instantly
 - **Date Overlap Detection**: Automatically calculates when everyone is available
-- **Activity Planning**: Plan activities for each day with time slots (morning, afternoon, evening, night)
+- **Activity Planning**: Plan activities for each day with time slots
 - **Voting System**: Upvote/downvote activities to reach consensus
-- **AI Assistant**: Get travel recommendations powered by Claude, GPT-4, Llama, and more
+- **AI Assistant**: Get travel recommendations powered by Claude, GPT-4, and more
+- **Google + Guest Auth**: Sign in with Google or continue as guest
 
 ## Tech Stack
 
 - **Frontend**: React 18 + Vite + Tailwind CSS
 - **Database**: Firebase Realtime Database
-- **Auth**: Firebase Anonymous Auth
-- **AI**: OpenRouter API (Claude, GPT-4, Llama, Mistral, Gemini)
-- **Design**: Retro Travel Poster aesthetic
+- **Auth**: Firebase (Google + Anonymous)
+- **AI**: OpenRouter API (via Vercel Serverless Functions)
 
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+
-- Firebase project with Realtime Database enabled
-- OpenRouter API key (for AI features)
+## Quick Start
 
 ### 1. Clone and Install
 
 ```bash
-# Install frontend dependencies
+git clone https://github.com/anusheeel/triplab.git
+cd triplab
 npm install
-
-# Install server dependencies
-cd server && npm install && cd ..
 ```
 
 ### 2. Configure Firebase
 
 1. Create a Firebase project at [console.firebase.google.com](https://console.firebase.google.com)
-2. Enable Realtime Database
-3. Enable Anonymous Authentication
-4. Copy your Firebase config
+2. Enable **Realtime Database**
+3. Enable **Authentication** → Sign-in methods: **Anonymous** and **Google**
 
-Create `.env` in the project root:
+Create `.env` in project root:
 
 ```env
 VITE_FIREBASE_API_KEY=your-api-key
@@ -55,20 +46,49 @@ VITE_FIREBASE_MESSAGING_SENDER_ID=your-sender-id
 VITE_FIREBASE_APP_ID=your-app-id
 ```
 
-### 3. Configure OpenRouter (for AI features)
+### 3. Run Locally
 
-1. Get an API key at [openrouter.ai/keys](https://openrouter.ai/keys)
-
-Create `server/.env`:
-
-```env
-OPENROUTER_API_KEY=your-openrouter-key
-PORT=3001
+```bash
+npm run dev
 ```
 
-### 4. Set Firebase Rules
+For AI chat locally, also run:
+```bash
+cd server && npm install && npm start
+```
 
-In your Firebase Console, set these Realtime Database rules:
+## Deploy to Vercel
+
+### 1. Import to Vercel
+
+- Go to [vercel.com](https://vercel.com)
+- Import your GitHub repo
+
+### 2. Add Environment Variables
+
+In Vercel dashboard, add:
+
+```
+VITE_FIREBASE_API_KEY
+VITE_FIREBASE_AUTH_DOMAIN
+VITE_FIREBASE_DATABASE_URL
+VITE_FIREBASE_PROJECT_ID
+VITE_FIREBASE_STORAGE_BUCKET
+VITE_FIREBASE_MESSAGING_SENDER_ID
+VITE_FIREBASE_APP_ID
+OPENROUTER_API_KEY          # For AI chat
+```
+
+### 3. Configure Firebase for Production
+
+1. Go to Firebase Console → Authentication → Settings
+2. Add your Vercel domain to **Authorized domains** (e.g., `triplab.vercel.app`)
+
+### 4. Deploy!
+
+Vercel will automatically deploy on push to main.
+
+## Firebase Database Rules
 
 ```json
 {
@@ -93,55 +113,20 @@ In your Firebase Console, set these Realtime Database rules:
 }
 ```
 
-### 5. Run the App
-
-```bash
-# Terminal 1: Start the frontend
-npm run dev
-
-# Terminal 2: Start the API server (for AI features)
-cd server && npm start
-```
-
-Visit [http://localhost:5173](http://localhost:5173)
-
-## Usage
-
-1. **Create a Trip**: Enter your name and destination
-2. **Share the Code**: Send the 6-character code to friends
-3. **Select Dates**: Everyone picks their available dates
-4. **Lock Dates**: Click "Lock My Dates" when done selecting
-5. **Plan Activities**: Once everyone locks, plan activities together
-6. **Use AI**: Toggle the AI Assistant for recommendations
-
 ## Project Structure
 
 ```
-src/
-├── components/       # React components
-├── config/          # Firebase configuration
-├── contexts/        # React context providers
-├── hooks/           # Custom React hooks
-├── pages/           # Page components
-└── utils/           # Utility functions
-
-server/              # Express API server
-├── index.js         # Server entry point
-└── .env.example     # Environment template
+├── api/                  # Vercel serverless functions
+│   └── chat.js          # OpenRouter AI proxy
+├── src/
+│   ├── components/      # React components
+│   ├── contexts/        # Auth context
+│   ├── hooks/           # Firebase hooks
+│   ├── pages/           # Page components
+│   └── utils/           # Utility functions
+├── server/              # Local dev server (optional)
+└── vercel.json          # Vercel configuration
 ```
-
-## Available Scripts
-
-### Frontend
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-
-### Server
-
-- `npm start` - Start the API server
-- `npm run dev` - Start with auto-reload
 
 ## License
 
