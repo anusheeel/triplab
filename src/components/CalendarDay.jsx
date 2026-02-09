@@ -50,9 +50,11 @@ export default function CalendarDay({
 
   return (
     <button
+      data-date={dateStr}
       onClick={onClick}
       onMouseDown={(e) => { e.preventDefault(); onDragStart?.(); }}
       onMouseEnter={onDragEnter}
+      onTouchStart={(e) => { e.preventDefault(); onDragStart?.(); }}
       disabled={!isClickable}
       className={`
         relative aspect-square p-0.5 rounded-lg

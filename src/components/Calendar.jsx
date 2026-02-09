@@ -122,6 +122,31 @@ export default function Calendar({
     setDragMode(null)
   }, [isDragging, draggedDates, dragMode, selectedDates, onDatesSelect])
 
+  // Touch move handler - detect which element finger is over
+  const handleTouchMove = useCallback((e) => {
+    if (!isDragging) return
+
+    const touch = e.touches[0]
+    const element = document.elementFromPoint(touch.clientX, touch.clientY)
+
+    // Find the calendar day button (traverse up if needed)
+    const dayButton = element?.closest('[data-date]')
+    if (dayButton) {
+      const dateStr = dayButton.getAttribute('data-date')
+      if (dateStr) {
+        // Parse the date to check if it's valid for selection
+        const date = new Date(dateStr + 'T00:00:00')
+        if (!isBefore(date, today) && isSameMonth(date, currentMonth)) {
+          setDraggedDates(prev => {
+            const newSet = new Set(prev)
+            newSet.add(dateStr)
+            return newSet
+          })
+        }
+      }
+    }
+  }, [isDragging, today, currentMonth])
+
   // Check if date is being dragged over
   const isDragTarget = (dateStr) => draggedDates.has(dateStr)
 
@@ -180,6 +205,9 @@ export default function Calendar({
         className="grid grid-cols-7 gap-1 select-none"
         onMouseLeave={handleDragEnd}
         onMouseUp={handleDragEnd}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleDragEnd}
+        onTouchCancel={handleDragEnd}
       >
         {days.map((day) => {
           const dateStr = format(day, 'yyyy-MM-dd')
